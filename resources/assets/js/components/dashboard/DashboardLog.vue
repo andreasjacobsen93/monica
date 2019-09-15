@@ -184,7 +184,7 @@
             <li v-for="task in contactRelated(tasks)" :key="task.id" class="pb0 mb2">
               <label class="pointer mb1">
                 <input v-model="task.completed" type="checkbox" class="mr1" @click="updateTask(task)" />
-                {{ task.title }}
+                <strike v-if="task.completed">{{ task.title }}</strike>
               </label>
               <span class="black-50 mr1 f7">
                 <a :href="'people/' + task.contact.hash_id">
