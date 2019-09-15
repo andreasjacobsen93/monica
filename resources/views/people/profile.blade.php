@@ -87,8 +87,8 @@
                   @endif
                   {{ trans('people.life_event_list_tab_life_events') }} ({{ $contact->lifeEvents()->count() }})
                 </span>
-                <span @click="updateDefaultProfileView('notes')" :class="[global_profile_default_view == 'notes' ? 'f6 fl bb bt ph3 pv2 dib b br--right br mb4 b--gray-monica' : 'f6 fl bb bt ph3 pv2 dib bg-gray-monica br--right br pointer mb4 b--gray-monica']">Notes ({{ $contact->notes()->count() }})</span>
                 <span @click="updateDefaultProfileView('other')" :class="[global_profile_default_view == 'other' ? 'f6 fl bb bt ph3 pv2 dib b br--right br mb4 b--gray-monica' : 'f6 fl bb bt ph3 pv2 dib bg-gray-monica br--right br pointer mb4 b--gray-monica']">Reminders, activities, ...</span>
+                <span @click="updateDefaultProfileView('notes')" :class="[global_profile_default_view == 'notes' ? 'f6 fl bb bt ph3 pv2 dib b br--right br mb4 b--gray-monica' : 'f6 fl bb bt ph3 pv2 dib bg-gray-monica br--right br pointer mb4 b--gray-monica']">Notes ({{ $contact->notes()->count() }})</span>
                 <span @click="updateDefaultProfileView('photos')" :class="[global_profile_default_view == 'photos' ? 'f6 fl bb bt ph3 pv2 dib b br2 br--right br mb4 b--gray-monica' : 'f6 fl bb bt ph3 pv2 dib bg-gray-monica br2 br--right br pointer mb4 b--gray-monica']">Photos</span>
               </div>
             </div>
@@ -107,11 +107,9 @@
                 </div>
               </div>
               @endif
-
             </div>
 
             <div v-if="global_profile_default_view == 'other'">
-
               @if ($modules->contains('key', 'conversations'))
               <div class="row section">
                 @include('people.conversations.index')
