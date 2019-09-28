@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Helpers\StringHelper;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 
 trait Searchable
@@ -19,17 +20,27 @@ trait Searchable
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|null
      */
-    public function scopeSearch(Builder $builder, $needle, $accountId, $limitPerPage, $sortOrder, $whereCondition = null)
+    public function scopeSearch(Builder $builder, $needle, $accountId, $limitPerPage, $orderBy, $whereCondition = null, $sortOrder = null)
     {
         if ($this->searchable_columns == null) {
             return;
         }
 
-        $queryString = StringHelper::buildQuery($this->searchable_columns, $needle);
+        $tablePrefix = DB::connection()->getTablePrefix();
+        $searchableColumns = array_map(function ($column) use ($tablePrefix) {
+            return "`$tablePrefix{$this->getTable()}`.`$column`";
+        }, $this->searchable_columns);
 
-        $builder->whereRaw('account_id = '.$accountId.' and ('.$queryString.') '.$whereCondition);
-        $builder->orderByRaw($sortOrder);
-        $builder->select($this->return_from_search);
+        $queryString = StringHelper::buildQuery($searchableColumns, $needle);
+
+        $builder->whereRaw("`$tablePrefix{$this->getTable()}`.`account_id` = $accountId AND ($queryString) $whereCondition");
+        $builder->orderByRaw($orderBy);
+        if ($sortOrder) {
+            $builder->sortedBy($sortOrder);
+        }
+        $builder->select(array_map(function ($column) use ($tablePrefix) {
+            return "$tablePrefix{$this->getTable()}.$column";
+        }, $this->return_from_search));
 
         return $builder->paginate($limitPerPage);
     }
